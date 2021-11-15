@@ -14,13 +14,11 @@ import (
 type (
 	// Config represents the main app's configuration.
 	Config struct {
-		Client Client
-	}
-
-	// Client represents client RPC configuration.
-	Client struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port"`
+		Host              string `yaml:"host"`
+		Port              int    `yaml:"port"`
+		MaxConnectionIdle int    `yaml:"max_connection_idle"`
+		TimeOut           int    `yaml:"time_out"`
+		MessageTimeOut    int    `yaml:"message_time_out"`
 	}
 )
 
@@ -52,10 +50,11 @@ func (c *Config) Init() error {
 // flushToDefault flushes Config to the default values.
 func (c *Config) flushToDefault() {
 	*c = Config{
-		Client: Client{
-			Host: "localhost",
-			Port: 4040,
-		},
+		Host:              "localhost",
+		Port:              4141,
+		MaxConnectionIdle: 10,
+		TimeOut:           5,
+		MessageTimeOut:    50,
 	}
 }
 

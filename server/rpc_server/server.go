@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"time"
 
 	"github.com/evenlab/go-kit/context"
 	"github.com/jkrus/keep_connection/pb"
@@ -23,7 +22,7 @@ func RPCServer(cfg *config.Config) *grpc.Server {
 
 	gRPCServer := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle: 60 * time.Second,
+			MaxConnectionIdle: cfg.MaxConnectionIdle,
 		}),
 	)
 

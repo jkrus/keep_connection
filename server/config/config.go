@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/evenlab/go-kit/drive"
 	"github.com/evenlab/go-kit/errors"
@@ -14,8 +15,9 @@ import (
 type (
 	// Config represents the main app's configuration.
 	Config struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port"`
+		Host              string `yaml:"host"`
+		Port              int    `yaml:"port"`
+		MaxConnectionIdle time.Duration
 	}
 )
 
@@ -47,8 +49,9 @@ func (c *Config) Init() error {
 // flushToDefault flushes Config to the default values.
 func (c *Config) flushToDefault() {
 	*c = Config{
-		Host: "localhost",
-		Port: 4141,
+		Host:              "localhost",
+		Port:              4141,
+		MaxConnectionIdle: 60 * time.Second,
 	}
 }
 

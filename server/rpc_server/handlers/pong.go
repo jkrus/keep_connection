@@ -2,27 +2,19 @@ package handlers
 
 import (
 	"context"
+	"log"
 
-	ping "evenfound/even/pingpong"
+	"github.com/jkrus/keep_connection/pb"
 )
 
 type Pong struct {
-	api.UnsafePingPongServer
+	pb.UnsafePingPongServer
 }
 
-var _ api.PingPongServer = (*Pong)(nil)
+var _ pb.PingPongServer = (*Pong)(nil)
 
 // PingMessage implements method PingPongServer.PingMessage.
-func (p *Pong) PingMessage(_ context.Context, in *api.PingPongRequest) (*api.PingPongResponse, error) {
-	var reqpmsg = in.GetPingMessage()
-	resmsg, err := getResponseMessage(reqpmsg)
-	if err != nil {
-		return nil, err
-	}
-	return &api.PingPongResponse{Result: resmsg}, nil
-}
-
-// getResponseMessage gets a string with the response "PONG"
-func getResponseMessage(s string) (string, error) {
-	return ping.GetMessage(s)
+func (p *Pong) PingMessage(_ context.Context, in *pb.PingPongRequest) (*pb.PingPongResponse, error) {
+	log.Println(in.GetPingMessage())
+	return &pb.PingPongResponse{Result: "pong"}, nil
 }

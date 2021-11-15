@@ -30,13 +30,6 @@ func NewPongService(ctx context.Context, dic *di.Container) Pong {
 	}
 }
 
-// Pong implements Pong interface.
-func (s *pongService) Pong() error {
-	// TODO implement protocol here.
-
-	return nil
-}
-
 // Start implements Pong interface.
 func (s *pongService) Start() error {
 	log.Println("Starts pong service...")
@@ -51,7 +44,7 @@ func (s *pongService) Stop() error {
 	log.Println("Stops pong service...")
 	s.ctx.Cancel()
 	s.ctx.WgDone()
-	log.Println("Pong service stop complete.")
+	log.Println("keepConnection service stop complete.")
 
 	return nil
 }
