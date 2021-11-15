@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/evenlab/go-kit/context"
+	"github.com/jkrus/keep_connection/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
-	"keep_connection/pb"
 
 	"keep_connection_server/config"
 	"keep_connection_server/rpc_server/handlers"
