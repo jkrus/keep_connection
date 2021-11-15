@@ -17,7 +17,7 @@ import (
 func RPCServer(cfg *config.Config) *grpc.Server {
 	var (
 		// please add in alphabetical order
-		pingHandler = handlers.Pong{}
+		pongHandler = handlers.Pong{}
 	)
 
 	gRPCServer := grpc.NewServer(
@@ -27,7 +27,7 @@ func RPCServer(cfg *config.Config) *grpc.Server {
 	)
 
 	// please add in alphabetical order
-	pb.RegisterPingPongServer(gRPCServer, &pingHandler)
+	pb.RegisterPingPongServer(gRPCServer, &pongHandler)
 
 	return gRPCServer
 }

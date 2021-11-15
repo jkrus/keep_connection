@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package api;
+package pb;
 
 option go_package = "github.com/jkrus/keep_connection/pb";
 
@@ -13,5 +13,5 @@ message PingPongResponse {
 }
 
 service PingPong {
-  rpc PingMessage (PingPongRequest) returns (PingPongResponse);
+  rpc PingMessage (stream PingPongRequest) returns (stream PingPongResponse);
 }
