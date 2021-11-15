@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"keep_connection/pb"
+	"github.com/jkrus/keep_connection/pb"
 )
 
 type Pong struct {

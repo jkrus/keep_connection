@@ -1,4 +1,4 @@
-module keep_connection
+module github.com/jkrus/keep_connection
 
 go 1.16
 
