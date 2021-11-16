@@ -17,7 +17,7 @@ import (
 func RPCServer(cfg *config.Config) *grpc.Server {
 	var (
 		// please add in alphabetical order
-		pongHandler = handlers.Pong{}
+		pongHandler = handlers.Pong{ConnIdle: cfg.MaxConnectionIdle}
 	)
 
 	gRPCServer := grpc.NewServer(

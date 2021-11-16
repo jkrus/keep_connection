@@ -12,13 +12,15 @@ type Pong struct {
 	pb.UnimplementedPingPongServer
 	inspect   bool
 	idleTimer *time.Timer
+	ConnIdle  time.Duration
 }
 
 // PingMessage implements method PingPongServer.PingMessage.
 func (p *Pong) PingMessage(stream pb.PingPong_PingMessageServer) error {
 	if !p.inspect {
 		p.inspect = true
-		p.idleTimer = time.NewTimer(20 * time.Second)
+		p.idleTimer = time.NewTimer(p.ConnIdle)
+		log.Println(p.ConnIdle)
 		go p.watchTimer()
 	}
 
@@ -31,7 +33,7 @@ func (p *Pong) PingMessage(stream pb.PingPong_PingMessageServer) error {
 			return err
 		}
 		if in.GetPingMessage() == "ping" {
-			p.idleTimer.Reset(20 * time.Second)
+			p.idleTimer.Reset(p.ConnIdle)
 			log.Println("client in touch")
 			if err = stream.Send(&pb.PingPongResponse{Result: "pong"}); err != nil {
 				return err

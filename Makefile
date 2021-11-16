@@ -25,3 +25,10 @@ generate:
 		--go-grpc_out=. \
         --go-grpc_opt=module="github.com/jkrus/keep_connection" \
 		--proto_path=pb/proto pb/proto/*.proto
+
+build:
+	cd client && \
+	go build main.go && \
+	cd ../server && \
+	go build main.go
+

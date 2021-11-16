@@ -1,0 +1,35 @@
+@startuml
+Client -> Server : 1. Ping каждые (max_connection_idle / 2)
+note right Server
+От клиента пришёл Ping-запрос, значит клиент на связи.
+Cервер запускает таймер ожидания max_connection_idle.
+end note
+Server -> Client : 2. Pong
+Client ->x Server : 3. Ping
+note right Server
+От клиента Ping-запрос не пришёл.
+Таймер ожидания max_connection_idle продолжает истекать.
+end note
+note left Client
+От сервера не пришёл ответ.
+Отправлю ещё серию пинг запросов через time_out
+end note
+Client ->x Server : 5. Ping каждые (message_time_out)
+Client ->x Server : 6. Ping каждые (message_time_out)
+Client ->x Server : 7. Ping каждые (message_time_out)
+note right Server
+Если хоть один из запросов 5,6,7 дойдут до сервера
+ значит клиент на связи- обновим таймер max_connection_idle.
+end note
+note left Client
+Буду повторять с 3 по 7 шаги,
+пока не кончатся попытки- limit_attempts
+end note
+Client -> Server : 8. Ping
+note right Server
+Если на сервере не истекло max_connection_idle:
+ответим клиенту и обновимтаймер max_connection_idle.
+В противном случае закрываем нужные соединения.
+end note
+Server -> Client : 2. Pong
+@enduml
