@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/jkrus/keep_connection/pb"
+	"keep_connection_server/rpc_server/pb"
 )
 
 type Pong struct {
@@ -9,7 +9,7 @@ type Pong struct {
 }
 
 // PingMessage implements method PingPongServer.PingMessage.
-func (p *Pong) PingMessage(stream pb.) error {
+func (p *Pong) PingMessage(stream pb.PingPong_PingMessageServer) error {
 	stream.
 	return  nil
 }

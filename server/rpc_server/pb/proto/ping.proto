@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jkrus/keep_connection/pb";
+
+message PingPongRequest {
+  string pingMessage = 1;
+}
+
+message PingPongResponse {
+  string result = 1;
+}
+
+service PingPong {
+  rpc PingMessage (stream PingPongRequest) returns (stream PingPongResponse);
+}
