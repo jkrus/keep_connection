@@ -9,6 +9,7 @@ import (
 
 	"keep_connection_client/config"
 	api "keep_connection_client/errors"
+	"keep_connection_client/rpc"
 	"keep_connection_client/service"
 )
 
@@ -48,8 +49,13 @@ func startCommand(ctx context.Context, cfg *config.Config, dic *di.Container, ap
 // invokeServices tries to invoke required
 // services from application container.
 func invokeServices(dic *di.Container) error {
-	// invoke auth admin service starter
-	if err := dic.Invoke(service.Ping.Start); err != nil {
+	// provide the rpc client config
+	if err := dic.Invoke(rpc.RPCClientConfig); err != nil {
+		return err
+	}
+
+	// invoke the app rpc keep connect starter
+	if err := dic.Invoke(service.KeepConnect.Start); err != nil {
 		return api.ErrStartPingService(err)
 	}
 
@@ -59,8 +65,9 @@ func invokeServices(dic *di.Container) error {
 // provideServices tries to provide required
 // services into application container.
 func provideServices(dic *di.Container) error {
-	// provide the app admin service
-	if err := dic.Provide(service.NewPingService); err != nil {
+
+	// provide the app keep connect service
+	if err := dic.Provide(service.NewKeepConnectService); err != nil {
 		return err
 	}
 

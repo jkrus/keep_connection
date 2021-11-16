@@ -1,45 +1,39 @@
-// Copyright © 2017-2020 The EVEN Foundation developers
-
 package rpc
 
 import (
-	"context"
 	"fmt"
-	"time"
+	"strconv"
 
 	"google.golang.org/grpc"
+
+	"keep_connection_client/config"
 )
 
 var (
-	con *grpc.ClientConn // global variables are harmful
-	ctx context.Context  // global variables are harmful
-
-	cancel  func()
-	timeout = 30 * time.Second
+	con  *grpc.ClientConn // global variables are harmful
+	conf *config.Config
 )
+
+func RPCClientConfig(cfg *config.Config) {
+	conf = cfg
+	return
+}
 
 func connect() error {
 	var err error
 	// Set up a connection to the server
-	con, err = grpc.Dial("localhost:4141", grpc.WithInsecure())
+	addr := conf.Host + ":" + strconv.Itoa(conf.Port)
+	con, err = grpc.Dial(addr, grpc.WithInsecure())
 
 	if err != nil {
 		return fmt.Errorf("rpc connect: %w", err)
 	}
 
-	freshContext()
-
 	return nil
 }
 
 func terminate() {
-	defer cancel()
 	if con != nil {
 		_ = con.Close()
 	}
-}
-
-func freshContext() {
-	// Create a context
-	ctx, cancel = context.WithTimeout(context.Background(), timeout)
 }

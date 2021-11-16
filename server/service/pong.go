@@ -20,8 +20,8 @@ var (
 	_ Pong = (*pongService)(nil)
 )
 
-// NewPongService returns Pong interface.
-func NewPongService(ctx context.Context, dic *di.Container) Pong {
+// NewKeepConnectService returns Pong interface.
+func NewKeepConnectService(ctx context.Context, dic *di.Container) Pong {
 	return &pongService{
 		// use context with cancel and wait
 		// to gracefully stop pongService

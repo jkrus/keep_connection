@@ -15,9 +15,9 @@ import (
 type (
 	// Config represents the main app's configuration.
 	Config struct {
-		Host              string `yaml:"host"`
-		Port              int    `yaml:"port"`
-		MaxConnectionIdle time.Duration
+		Host              string        `yaml:"host"`
+		Port              int           `yaml:"port"`
+		MaxConnectionIdle time.Duration `yaml:"max_connection_idle"`
 	}
 )
 

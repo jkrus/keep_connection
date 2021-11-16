@@ -12,7 +12,7 @@ import (
 )
 
 type (
-	// pingService implements Ping interface.
+	// pingService implements KeepConnect interface.
 	pingService struct {
 		ctx context.Context
 		dic *di.Container
@@ -20,12 +20,12 @@ type (
 )
 
 var (
-	// Make sure pingService implements Ping interface.
-	_ Ping = (*pingService)(nil)
+	// Make sure pingService implements KeepConnect interface.
+	_ KeepConnect = (*pingService)(nil)
 )
 
-// NewPingService returns Ping interface.
-func NewPingService(ctx context.Context, dic *di.Container) Ping {
+// NewKeepConnectService returns KeepConnect interface.
+func NewKeepConnectService(ctx context.Context, dic *di.Container) KeepConnect {
 	return &pingService{
 		// use context with cancel and wait
 		// to gracefully stop pingService
@@ -35,19 +35,17 @@ func NewPingService(ctx context.Context, dic *di.Container) Ping {
 }
 
 // keepConnection ...
-func (s *pingService) keepConnection() error {
+func (s *pingService) keepConnection() {
 	var cfg *config.Config
 	if err := s.dic.Resolve(&cfg); err != nil {
-		return nil
+		log.Println(err)
+		return
 	}
 
-	pingTime := time.Duration(cfg.MaxConnectionIdle/2) * 1000 * 1000 * 1000
-	timeOut := time.Duration(cfg.TimeOut) * 1000 * 1000 * 1000
-	timeOutMsg := time.Duration(cfg.MessageTimeOut) * 1000 * 1000
+	pingTimer := time.NewTimer(cfg.MaxConnectionIdle / 2)
+	timeOutTimer := time.NewTimer(cfg.TimeOut)
+	msgTimeOut := time.NewTimer(cfg.MessageTimeOut)
 
-	pingTimer := time.NewTimer(pingTime)
-	timeOutTimer := time.NewTimer(timeOut)
-	msgTimeOut := time.NewTimer(timeOutMsg)
 	timeOutTimer.Stop()
 	msgTimeOut.Stop()
 	defer func() {
@@ -57,22 +55,27 @@ func (s *pingService) keepConnection() error {
 	}()
 
 	var count int
-	log.Println("1")
+	var attempts int
 	for {
+		if attempts > cfg.LimitAttempts {
+			log.Println("attempts is end")
+			break
+		}
 		select {
 		case <-pingTimer.C:
-			log.Println("2")
+			log.Println("ping")
 			ack, err := rpc.RenewalRequest()
 			if err != nil {
 				log.Println(err.Error())
 			}
 			if !ack {
-				msgTimeOut.Reset(timeOutMsg)
+				msgTimeOut.Reset(cfg.MessageTimeOut)
+				continue
 			}
-			pingTimer.Reset(pingTime)
+			pingTimer.Reset(cfg.MaxConnectionIdle / 2)
 
 		case <-msgTimeOut.C:
-			log.Println("3")
+			log.Println("ping timeOut")
 			ack, err := rpc.RenewalRequest()
 			if err != nil {
 				log.Println(err.Error())
@@ -80,29 +83,33 @@ func (s *pingService) keepConnection() error {
 			if !ack {
 				count++
 				if count < 2 {
-					timeOutTimer.Reset(timeOutMsg)
+					timeOutTimer.Reset(cfg.MessageTimeOut)
 					continue
 				}
 				count = 0
-				msgTimeOut.Reset(timeOut)
+				msgTimeOut.Reset(cfg.TimeOut)
+				attempts++
+				log.Println("attempts = ", attempts)
+				continue
 			}
-
+			attempts = 0
+			pingTimer.Reset(cfg.MaxConnectionIdle / 2)
 		case <-timeOutTimer.C:
-			log.Println("4")
+			log.Println("ping serial")
 			ack, err := rpc.RenewalRequest()
 			if err != nil {
 				log.Println(err.Error())
 			}
 			if !ack {
-				msgTimeOut.Reset(timeOutMsg)
+				msgTimeOut.Reset(cfg.MessageTimeOut)
 			}
 		}
 	}
 
-	return nil
+	return
 }
 
-// Start implements Ping interface.
+// Start implements KeepConnect interface.
 func (s *pingService) Start() error {
 	log.Println("Starts keep connection service...")
 
@@ -113,7 +120,7 @@ func (s *pingService) Start() error {
 	return nil
 }
 
-// Stop implements Ping interface.
+// Stop implements KeepConnect interface.
 func (s *pingService) Stop() error {
 	log.Println("Stops keep connection service...")
 	s.ctx.Cancel()

@@ -1,8 +1,8 @@
 package service
 
 type (
-	// Ping describes service interface.
-	Ping interface {
+	// KeepConnect describes service interface.
+	KeepConnect interface {
 		// Start tries start service.
 		Start() error
 

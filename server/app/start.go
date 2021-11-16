@@ -69,13 +69,13 @@ func invokeServices(dic *di.Container) error {
 // provideServices tries to provide required
 // services into application container.
 func provideServices(dic *di.Container) error {
-	// provide the app http server
+	// provide the app rpc server
 	if err := dic.Provide(rpc_server.RPCServer); err != nil {
 		return err
 	}
 
-	// provide the app admin service
-	if err := dic.Provide(service.NewPongService); err != nil {
+	// provide the app keep connect service
+	if err := dic.Provide(service.NewKeepConnectService); err != nil {
 		return err
 	}
 

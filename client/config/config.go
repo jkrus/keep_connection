@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/evenlab/go-kit/drive"
 	"github.com/evenlab/go-kit/errors"
@@ -14,11 +15,12 @@ import (
 type (
 	// Config represents the main app's configuration.
 	Config struct {
-		Host              string `yaml:"host"`
-		Port              int    `yaml:"port"`
-		MaxConnectionIdle int    `yaml:"max_connection_idle"`
-		TimeOut           int    `yaml:"time_out"`
-		MessageTimeOut    int    `yaml:"message_time_out"`
+		Host              string        `yaml:"host"`
+		Port              int           `yaml:"port"`
+		MaxConnectionIdle time.Duration `yaml:"max_connection_idle"`
+		TimeOut           time.Duration `yaml:"time_out"`
+		MessageTimeOut    time.Duration `yaml:"message_time_out"`
+		LimitAttempts     int           `yaml:"limit_attempts"`
 	}
 )
 
@@ -52,9 +54,10 @@ func (c *Config) flushToDefault() {
 	*c = Config{
 		Host:              "localhost",
 		Port:              4141,
-		MaxConnectionIdle: 10,
-		TimeOut:           5,
-		MessageTimeOut:    50,
+		MaxConnectionIdle: 60 * time.Second,
+		TimeOut:           5 * time.Second,
+		MessageTimeOut:    50 * time.Millisecond,
+		LimitAttempts:     5,
 	}
 }
 
