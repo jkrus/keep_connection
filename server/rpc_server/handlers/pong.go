@@ -9,7 +9,7 @@ type Pong struct {
 }
 
 // PingMessage implements method PingPongServer.PingMessage.
-func (p *Pong) PingMessage(stream pb.PingPong_PingMessageServer) error {
+func (p *Pong) PingMessage(stream pb.) error {
 	stream.
 	return  nil
 }
