@@ -43,8 +43,8 @@ func Start(
 	if err != nil {
 		log.Fatal(fmt.Errorf("failed to listen: %v", err))
 	}
-
-	createContextHandler(ctx.WithCancelWait(), server)
+	cc := ctx.WithCancelWait()
+	createContextHandler(cc, server)
 
 	log.Printf("Listen on: %s:%v and serve...", cfg.Host, cfg.Port)
 
@@ -58,6 +58,7 @@ func createContextHandler(ctx context.Context, server *grpc.Server) {
 	go func() {
 		<-ctx.Done()
 		defer ctx.WgDone()
+		ctx.Cancel()
 
 		log.Println("RPC server shutting down...")
 		server.Stop()

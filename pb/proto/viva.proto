@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jkrus/keep_connection/pb";
+
+import "process.proto";
+
+service Viva {
+  // ClientStream is a singular method to establish server->mobile app connection, and all messages and data from camunda transfers using this endpoint
+  // ClientStream endpoint is a stream-type connection. All request and responses transfers using one connection
+  rpc ClientStream (ClientVivaMessage) returns (stream ClientVivaMessage) {}
+
+}

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/jkrus/keep_connection/pb";
+
+// All information about process
+// Process key is a name of process in Camunda. Should be passed only in first connection with server
+// Process Id is an instance of process in Camunda. All requests and response should have process id
+// filled to determine which process the message is associated with.
+message VivaProcess {
+  string key = 1;
+  string name = 2;
+}
+
+// All information about server error.
+// Message is an error message
+// Code is an error code
+message VivaError {
+  string message = 1;
+  int32 code = 2;
+}
+
+// All information about request and response
+// Mobile app should send all required data to server using data field. All data should be in JSON format
+// For the first request only process key is required, than, for others only data and process id is required
+// Server side app should send all messages to mobile app using data field. All data should be in JSON format
+// From server mobile app should receive a required process id and data field.
+// If an error caused in server side, it will be provided in error field.
+message VivaMessage {
+  VivaProcess process = 1;
+  string data = 2;
+  int32 status = 3;
+  VivaError error = 4;
+}
+
+message VivaResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ClientVivaMessage {
+  VivaProcess process = 1;
+  string data = 2;
+  int32 status = 3;
+  VivaError error = 4;
+  uint64 lastMessageId = 5;
+}

@@ -35,9 +35,18 @@ func (p *Pong) PingMessage(stream pb.PingPong_PingMessageServer) error {
 		if in.GetPingMessage() == "ping" {
 			p.idleTimer.Reset(p.ConnIdle)
 			log.Println("client in touch")
+			//	md := metadata.Pairs("PING","1")
+			log.Println("start delay")
+			time.Sleep(5 * time.Second)
+			log.Println("end delay")
+			/*	if err = stream.SendHeader(md); err != nil {
+				log.Println("Transport Error = ", err)
+			}*/
 			if err = stream.Send(&pb.PingPongResponse{Result: "pong"}); err != nil {
+				log.Println("Err = ", err)
 				return err
 			}
+			log.Println("sended")
 			break
 		}
 	}
